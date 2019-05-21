@@ -172,4 +172,4 @@ What does this mean for you? This community has made R pretty easy to learn (mos
 
 So there you have it! Hopefully some of you are interested in getting started in R, and I can stop going to conferences and telling people I'm the only R user at my organization :)
 
-![](https://giphy.com/gifs/schittscreek-schittscreek-pop-eugenelevy-comedy-26gs78HRO8sOuhTkQ)
+![](https://media.giphy.com/media/26gs78HRO8sOuhTkQ/giphy.gif)
