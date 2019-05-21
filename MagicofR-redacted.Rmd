@@ -1,0 +1,175 @@
+---
+title: "Behold, the Magic of R-redacted"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, eval = F)
+
+
+
+```
+
+### What is R
+
+R is this super fun open source programming language! Excited yet?
+
+![](https://media.giphy.com/media/TdfyKrN7HGTIY/giphy.gif)
+
+It was originally built for statistical analysis but has expanded well beyond that into a robust ecosystem that can do data visualization, create reproducible workflows, design and launch dashboards, webapps and html widgets, and even put machine learning models into production. To give you an idea of how flexible of a tool it is, this entire document, including the analyses, is written and published through R in a single script.  Want a word doc, slide show, or pdf? Cool, R can do that too. 
+
+### OK nerd, but why should I care?
+
+For SO.MANY.REASONS! Pull up a chair, coworkers, and allow me to tell you a tale of repeatability, reproducibility, nifty dataviz, and a thriving user community!
+
+![](https://media.giphy.com/media/eKDp7xvUdbCrC/giphy.gif)
+
+#### 1. Repeatability
+
+How many times has someone asked you to do a report, so you do it and think thank GOD that's over! And then they ask you to make a small change.  And then maybe add in this level of care. Oh, and also change the time range. Oh, and what if we include that one level of care that usually means x but this time means y because it's at this weird provider that does some very special thing that only they can do?
+
+Great, you just had to do that report 15 more times. Pull the data again. Clean the data again. Make the figures in excel again. Update  your word doc again. And now this is your life when you see another email from the requestor:
+
+![](https://media.giphy.com/media/L4AQvif7x9fS8/giphy.gif)
+
+What if after you did your SQL pull, EVERYTHING updated? Your report, your presentation, your cleaning process, your little list of quick factoids that you send execs...EVERYTHING!! (R can even do the SQL portion, but for that we need SQL servers that were set up some time in the last decade...) 
+
+#### 2.  Long-term Reproducibility
+
+So this is pretty much just repeatability, but after you forgot what the heck you did the first time.  Like when you did that one report 4 years ago that someone dug up, and now they want you to update it with new data but otherwise it's exactly the same. And you're like I have NO IDEA what I did, how I pivoted that data in excel, what filters I used, how I cleaned stuff.  So now you're starting from scratch, and you have to assume that the changes in the new results are a result of changes in the data and NOT changes in your process.
+
+But what if you could just hit a button to update that old report? And if you forgot what filters you applied, it's already written out in your code, line for line, in the actual report itself (not a separate file that you have to go through and figure out wait, did I use model A for figure 1 or model B?).
+
+This process is EVEN BETTER if the person who did that report 4 years ago left CBH. Because now anyone can run that process.
+
+#### 3. Nifty efficient data visualizations
+
+Excel graphics are.....mediocre.  SPSS graphics make excel graphics look great. SAS...I don't know, I refuse to learn SAS. But R graphics?? Since I've started using R, I've had countless comments from execs and directors about the polished look of my graphics, how they look like publication quality, how fancy they are, etc.  And who doesn't want folks to marvel at how beautiful their work is? No one does that with an excel graph, ever. 
+
+![](https://media.giphy.com/media/d5mI2F3MxCTJu/giphy.gif)
+
+Want to see some of the cool dataviz people do in R, using a webapp built in R? Check out [Tidy Tuesday Rocks](https://nsgrantham.shinyapps.io/tidytuesdayrocks/)
+
+
+Plus they're easy to make! And easy to update! (And fun fact - because of the way the figures are created, you can zoom in as much as you want and the image quality will adjust accodingly. Go ahead and try!) 
+
+So let's look at a case where creating an image in R is beneficial: let's say clinical wants to see the average length over time for Acute Inpatient.
+
+BOOM. Although we could do this in excel with less effort at this point, and line graphs are ho-hum to begin with, so R isn't really shining here.
+```{r LOS Overall}
+AIPbase %>% 
+  filter(str_detect(DCProvider, "OON") == F) %>% 
+  group_by(Year_Value) %>% 
+  summarize(AvgLOS = mean(LOSDays),
+            TotalN = n()) %>%
+  filter(TotalN >= 200) %>% 
+  ggplot(aes(x = Year_Value, y = AvgLOS)) +
+  geom_line() +
+  labs(title = "Average Length of Stay over Time",
+       subtitle = "Adults in In-Network Acute Inpatient (100.001, 100.004)",
+       x = "Discharge Year", y = "Average LOS(Days)") +
+  scale_x_continuous(breaks = seq(1998, 2018, 2)) +
+  theme_dark()+
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 12)) 
+```
+
+But then you get that dreaded email. Hey, can we see this figure for every single provider? Congrats, you're spending the rest of the day copying and pasting excel figures into word or powerpoint.
+
+OR! You're writing one extra line of R code to facet your figure by provider (plus a few more tweaks for aesthetics if you want):
+```{r byProv}
+
+AIPbase %>% 
+  filter(str_detect(DCProvider, "OON") == F) %>% 
+  group_by(DCProvider, Year_Value) %>% 
+  summarize(AvgLOS = mean(LOSDays),
+            TotalN = n()) %>%
+  filter(TotalN >= 200) %>% 
+  ggplot(aes(x = Year_Value, y = AvgLOS, group = DCProvider)) +
+  geom_line() +
+  labs(title = "Average Length of Stay over Time",
+       subtitle = "Adults in In-Network Acute Inpatient (100.001, 100.004)",
+       x = "Discharge Year", y = "Average LOS(Days)") +
+  scale_x_continuous(breaks = seq(1998, 2018, 2)) +
+  theme_dark()+
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 8, angle = 90),
+        strip.text.x = element_text(size = 6)) +
+  facet_wrap(~DCProvider) 
+```
+
+O wait, now they want trend lines? One more line of code it is:
+
+```{r wTrend, warning = F, message = F}
+AIPbase %>% 
+  filter(str_detect(DCProvider, "OON") == F) %>% 
+  group_by(DCProvider, Year_Value) %>% 
+  summarize(AvgLOS = mean(LOSDays),
+            TotalN = n()) %>%
+  filter(TotalN >= 200) %>% 
+  ggplot(aes(x = Year_Value, y = AvgLOS, group = DCProvider)) +
+  geom_line() +
+  geom_smooth(method = lm, se = F, color = "#42f4d7", size = 1) +
+  labs(title = "Average Length of Stay over Time",
+       subtitle = "Adults in Acute Inpatient (100.001, 100.004)",
+       x = "Discharge Year", y = "Average LOS(Days)") +
+  scale_x_continuous(breaks = seq(1998, 2018, 2)) +
+  theme_dark() +
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 8, angle = 90),
+        strip.text.x = element_text(size = 6)) +
+  facet_wrap(~DCProvider)
+```
+
+Now you just want to get fancy and offer up an animated version of average LOS by Age? Go for it.
+```{r}
+AIPCalYear_AgeCat <- AIPbase %>%
+  select(Year_Value, LOSDays, Age_ID_Dc) %>%
+  mutate(AgeCat = as_factor(ifelse(Age_ID_Dc-1 < 30, "Under 30",
+                         ifelse(Age_ID_Dc-1 < 40, "30 to 39",
+                                ifelse(Age_ID_Dc-1 < 50, "40 to 49",
+                                       ifelse(Age_ID_Dc-1 < 60, "50 to 59", "60+"
+                                              )
+                                       )
+                                    )
+                         )))%>%
+  group_by(Year_Value, AgeCat) %>%
+  summarize(AverageLOS = round(mean(LOSDays),2))
+
+
+p2 <- ggplot(data = AIPCalYear_AgeCat,
+            aes(x = Year_Value, y = AverageLOS, color = AgeCat, group = AgeCat)) +
+  geom_line()+
+  scale_x_continuous(limits = range(AIPCalYear_AgeCat$Year_Value),
+                     breaks = seq(min(AIPCalYear_AgeCat$Year_Value), max(AIPCalYear_AgeCat$Year_Value), by = 1)) +
+  #theme(legend.position="none") +
+  labs(title = "Average LOS in AIP Over Time Among Adults", 
+       x = 'Year of Discharge', y = 'Average LOS (Days)') +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  transition_reveal(id = AverageLOS, along = Year_Value) +
+  ease_aes('linear')
+
+animate(
+  plot = p2,
+  width = 1280,
+  height = 720,
+  res = 144,
+  fps = 20)
+
+```
+
+
+MIC. DROP.
+
+<img src="https://media.giphy.com/media/DfbpTbQ9TvSX6/giphy.gif" width = "200" height = "200" />
+
+And R isn't limited to static figures - you can create interactive figures, maps,interactive tables. The sky's the limit!
+
+#### 4. A thriving user community
+R also has a phenomenal user community that is welcoming, helpful, and very committed to keeping things open source. 
+
+What does this mean for you? This community has made R pretty easy to learn (most folks can get up and running with basic dataviz in a relatively short amount of time).  Google how to do pretty much anything in R, and someone not only figured it out, but probably made a package for it, and documented everything for you. Still stuck? Use the #rstats hashtag on twitter to get answers from around the world. Want to take a course? There are tons of free and low cost ones online from phenomenal instructors. Looking for a book? Since R is open source, most of our major books are also open source (read: free and available online, plus they were written and published through R!).  Need more? Conferences, meetups, user groups - all of these things abound, and the community is honestly one of the most welcoming groups I've ever been in.
+
+So there you have it! Hopefully some of you are interested in getting started in R, and I can stop going to conferences and telling people I'm the only R user at my organization :)
+
+![](https://giphy.com/gifs/schittscreek-schittscreek-pop-eugenelevy-comedy-26gs78HRO8sOuhTkQ)
