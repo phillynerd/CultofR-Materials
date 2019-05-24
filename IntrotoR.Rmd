@@ -1,0 +1,254 @@
+---
+title: "The First Day of the Rest of Your Life"
+subtitle: "A Brief ~~Initiation~~ Introduction to ~~the Cult of~~ R"
+author: "J Streeter, Data Scientist"
+date: "05/24/2019 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+background-image: url(https://media.giphy.com/media/f7rDDvcOV9n8I/giphy.gif)
+
+# Why learn a new language
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+---
+# Practical reasons
+
+* You're sick of doing the same thing over and over
+
+* You're sick of having to redo the report because clinical made 1 or 2 changes to the specs
+
+* You're sick of trying to figure out how you did that one report in excel pivots 2 years ago that someone now wants updated
+
+* You are unimpressed by the graphic options in excel and SPSS (and possibly SAS? Again, not sure, refuse to even open it)
+
+### Fun Bonuses
+* R is a highly marketable skill - one of two top languages for data science
+
+* Reproducibility, code repositories, research libraries, and other such things that are common in R communities are really industry standards in most places outside of the magical world of CBH
+
+---
+class: center, middle
+# So let's see what R can do
+.pull-left[<img src=https://media.giphy.com/media/1ZwekHBiKkBef31Pyt/giphy.gif>]
+
+.pull-right[<img src=https://media.giphy.com/media/3O70MZvRzKiOY/giphy.gif>]
+
+---
+class: center, middle, inverse
+# Data Visualizations
+
+<img src = https://media.giphy.com/media/PLHdpauwfN2MvHcHxL/giphy.gif>
+---
+# DataViz
+
+So here's what we've been dealing with in terms of Excel (these are from a google search for "great excel chart examples")
+
+<img src = Images/great-excel-chart-examples.png>
+
+---
+background-image: url(https://media.giphy.com/media/1400Ywo4LFDfSU/giphy.gif)
+---
+
+# Here is just a snippit of what you can do in R
+
+<img src = Images/srini_meen_TidyTuesday.PNG>
+---
+class: center, middle
+
+<img src = Images/WireMonkey_TidyTuesday.PNG>
+---
+class: center, middle
+<img src = Images/runjollyrun_TidyTuesday.PNG>
+---
+class: center, middle
+<img src = Images/ldbailey255_TidyTuesday.PNG>
+---
+class:center, middle
+<img src = Images/shadowformed_TidyTuesday.PNG>
+---
+# But this looks like so much work!
+
+* Spoiler alert: It's not that much! That last word cloud was created by someone who has been using R for 3 days
+
+* Plus, most of those folks release their code on GitHub, so you can download their code and then just tweek it to meet your data!
+
+---
+
+# OK but how much code are we talking here?
+
+```{r eval = F, message = F, warning = F}
+#pull in base philly map
+philly <- get_map (location = c(lon = -75.1652, lat = 40.01), 
+                  zoom = 11, source = "stamen", maptype = "toner-lite") 
+
+#pulling in locations of  SA and Bup docs
+bup <- read_csv("SAMHSA_BUP.csv") %>% 
+  select(name1, city, state, type_facility, latitude, longitude)
+
+sa <- read_csv("SAMHSA_SA_Providers.csv") %>% 
+  select(name1, city, state, type_facility, latitude, longitude)
+
+#merging the two datasets into a single data frame
+PhlTx <- sa  %>% 
+  bind_rows(bup) %>% #just adds in rows from bup below rows of sa
+  mutate(IsPhilly = ifelse(city == "Philadelphia", "Yes", "No")) #creating indicator col
+
+#and creating our map
+ggmap(philly, 
+      base_layer = ggplot(aes(x = longitude, y = latitude), data = PhlTx)) +
+  geom_point(aes(color = type_facility, shape = IsPhilly), size = 3, alpha = .6)
+```
+---
+class: center, middle 
+# That code produces this map
+```{r eval = T, echo = F, message = F, warning = F}
+#loading libraries
+library(tidyverse)
+library(ggmap)
+
+#pull in base philly map
+philly <- get_map (location = c(lon = -75.1652, lat = 40.01), 
+                  zoom = 11, source = "stamen", maptype = "toner-lite") 
+
+#pulling in locations of  SA and Bup docs
+bup <- read_csv("SAMHSA_BUP.csv") %>% 
+  select(name1, city, state, type_facility, latitude, longitude)
+
+sa <- read_csv("SAMHSA_SA_Providers.csv")
+
+#merging the two datasets into a single data frame
+PhlTx <- sa %>% 
+  select(name1, city, state, type_facility, latitude, longitude) %>% 
+  bind_rows(bup) %>% #just adds in rows from bup below rows of sa
+  #filter(city == "Philadelphia") #limiting to philadelphia
+  mutate(IsPhilly = ifelse(city %in% c("Philadelphia", "PHILADELPHIA"), "Yes", "No")) #creating indicator col
+
+#and creating our map
+ggmap(philly, 
+      base_layer = ggplot(aes(x = longitude, y = latitude), data = PhlTx)) +
+  geom_point(aes(color = type_facility, shape = IsPhilly), size = 3, alpha = .6)
+```
+---
+class: center, middle, inverse
+# Reproducibility
+
+<img src = https://media.giphy.com/media/AtequVohnG2XK/giphy.gif>
+---
+# Reproducibility
+
+* We all have tasks that we either repeatedly update, or make minor changes to.  Or we have a method that we apply to different populations with minimal tweaks. 
+* Wouldn't it be great if we had a way to code a process once, from start (data importation) through middle (cleaning and manipulation) to end (final report/images/presentations/etc)? 
+* R allows us to do that pretty easily!
+  * R scripts
+  * R markdown
+
+---
+# What is RMarkdown?
+* It's a package that allows you to simultaneously write r code, text, html, and a number of other languages
+* What this means is you get a rich document that is:
+  1. easy to write (most of the magic happens behind the scenes)
+  2. easy to update (just rerun the script with a new dataset)
+  3. a thorough record of your process (someone wants to know how you define x? Look at the code!)
+  4. versatile (set up the output to be pdf, html doc, html presentation, .doc, .ppt, etc)
+  5. easy for anyone else to run (undisturbed vacations, here you come!)
+---
+# RMarkdown in action: 
+* Remember that time Scott made a dashboard for provider report cards and we all had to manually change the parameters and print out 10 of them to PDFs? And then some of the cards we still had to manually edit to reformat provider names or tweak things a bit?  Clearly a good use of everyone's time and skill, agreed?
+* What if we could write a code once for the report card template, provide a list of all the providers, and then tell a program to iterate through that list and generate PDFs for each list? 
+
+<center><img src=https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif></center>
+
+* Small scale example: STEP report cards from beginning to end
+---
+# Fine but how hard is all of this to learn?
+
+* You can get up and running pretty quickly with a few basic concepts and a few set packages
+* A lot of the concepts are pretty similar to SQL and excel logic (with way fewer nested parentheses)
+* Copying and pasting other people's code, googling stuff, and using free online books all make learning R pretty easy
+* The biggest leap is probably learning ggplot, which relies on the grammar of graphics, but its not impossible
+  
+* I'm guessing you can probably read more of the code than you think
+
+```{r eval = F}
+#First item is the dataset (bup providers from before)
+# %>% - This symbol (pipe) is the equivalent of 
+#"Take what comes before it and then do this"
+
+sa %>% 
+ filter(city %in% c("Philadelphia", "Bensalem", "Norristown", "Phoenixville")) %>% 
+  group_by(city) %>% 
+  summarize(Nproviders = n()) %>% 
+  arrange(desc(Nproviders))
+
+  
+```
+
+---
+```{r eval = T}
+#First item is the dataset (bup providers from before)
+# %>% - This symbol (pipe) is the equivalent of 
+#"Take what comes before it and then do this"
+
+sa %>% 
+ filter(city %in% c("Philadelphia", "Bensalem", "Norristown", "Phoenixville")) %>% 
+  group_by(city) %>% 
+  summarize(Nproviders = n()) %>% 
+  arrange(desc(Nproviders))
+
+  
+```
+
+---
+#What if you want the top 10 cities by N SA providers?
+```{r eval = T}
+sa %>% 
+  group_by(city) %>% 
+  summarize(Nproviders = n()) %>% 
+  arrange(desc(Nproviders)) %>% 
+  mutate(ProvRank = rank(-Nproviders)) %>% 
+  filter(ProvRank <= 10)
+```
+
+---
+# Want a graph of top 10? 
+```{r eval = T, fig.height = 3.5, fig.align='center'}
+sa %>% 
+  group_by(city) %>% 
+  summarize(Nproviders = n()) %>% 
+  arrange(desc(Nproviders)) %>% 
+  mutate(ProvRank = rank(-Nproviders)) %>% 
+  filter(ProvRank <= 10) %>% 
+  ggplot(aes(x = reorder(city, -Nproviders), y = Nproviders)) +
+  geom_col(fill = "orange")
+```
+---
+Final print-ready version?
+```{r eval = T, fig.height = 3.5, fig.align='center'}
+sa %>% 
+  group_by(city) %>% 
+  summarize(Nproviders = n()) %>% 
+  arrange(desc(Nproviders)) %>% 
+  mutate(ProvRank = rank(-Nproviders)) %>% 
+  filter(ProvRank <= 10) %>% 
+  ggplot(aes(x = reorder(city, -Nproviders), y = Nproviders)) +
+  geom_col(fill = "orange") +
+  labs(title = "Top 10 Cities with Most SA Facilities",
+       x = "City",
+       y = "N Providers")
+```
+---
+class: center, middle, inverse
+# Questions? Thoughts? Next steps?
+<center> 
+<img src = https://media.giphy.com/media/5zjdchg0UfDGrHqqFV/giphy.gif>  
+<img src = https://media.giphy.com/media/xT4uQBNEr2CFjaV84M/giphy.gif> </center>

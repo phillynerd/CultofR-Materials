@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>The First Day of the Rest of Your Life</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="J Streeter, Data Scientist" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# The First Day of the Rest of Your Life
+## A Brief <del>Initiation</del> Introduction to <del>the Cult of</del> R
+### J Streeter, Data Scientist
+### 05/24/2019 (updated: 2019-05-24)
+
+---
+
+
+background-image: url(https://media.giphy.com/media/f7rDDvcOV9n8I/giphy.gif)
+
+# Why learn a new language
+
+
+
+---
+# Practical reasons
+
+* You're sick of doing the same thing over and over
+
+* You're sick of having to redo the report because clinical made 1 or 2 changes to the specs
+
+* You're sick of trying to figure out how you did that one report in excel pivots 2 years ago that someone now wants updated
+
+* You are unimpressed by the graphic options in excel and SPSS (and possibly SAS? Again, not sure, refuse to even open it)
+
+### Fun Bonuses
+* R is a highly marketable skill - one of two top languages for data science
+
+* Reproducibility, code repositories, research libraries, and other such things that are common in R communities are really industry standards in most places outside of the magical world of CBH
+
+---
+class: center, middle
+# So let's see what R can do
+.pull-left[&lt;img src=https://media.giphy.com/media/1ZwekHBiKkBef31Pyt/giphy.gif&gt;]
+
+.pull-right[&lt;img src=https://media.giphy.com/media/3O70MZvRzKiOY/giphy.gif&gt;]
+
+---
+class: center, middle, inverse
+# Data Visualizations
+
+&lt;img src = https://media.giphy.com/media/PLHdpauwfN2MvHcHxL/giphy.gif&gt;
+---
+# DataViz
+
+So here's what we've been dealing with in terms of Excel (these are from a google search for "great excel chart examples")
+
+&lt;img src = Images/great-excel-chart-examples.png&gt;
+
+---
+background-image: url(https://media.giphy.com/media/1400Ywo4LFDfSU/giphy.gif)
+---
+
+# Here is just a snippit of what you can do in R
+
+&lt;img src = Images/srini_meen_TidyTuesday.PNG&gt;
+---
+class: center, middle
+
+&lt;img src = Images/WireMonkey_TidyTuesday.PNG&gt;
+---
+class: center, middle
+&lt;img src = Images/runjollyrun_TidyTuesday.PNG&gt;
+---
+class: center, middle
+&lt;img src = Images/ldbailey255_TidyTuesday.PNG&gt;
+---
+class:center, middle
+&lt;img src = Images/shadowformed_TidyTuesday.PNG&gt;
+---
+# But this looks like so much work!
+
+* Spoiler alert: It's not that much! That last word cloud was created by someone who has been using R for 3 days
+
+* Plus, most of those folks release their code on GitHub, so you can download their code and then just tweek it to meet your data!
+
+---
+
+# OK but how much code are we talking here?
+
+
+```r
+#pull in base philly map
+philly &lt;- get_map (location = c(lon = -75.1652, lat = 40.01), 
+                  zoom = 11, source = "stamen", maptype = "toner-lite") 
+
+#pulling in locations of  SA and Bup docs
+bup &lt;- read_csv("SAMHSA_BUP.csv") %&gt;% 
+  select(name1, city, state, type_facility, latitude, longitude)
+
+sa &lt;- read_csv("SAMHSA_SA_Providers.csv") %&gt;% 
+  select(name1, city, state, type_facility, latitude, longitude)
+
+#merging the two datasets into a single data frame
+PhlTx &lt;- sa  %&gt;% 
+  bind_rows(bup) %&gt;% #just adds in rows from bup below rows of sa
+  mutate(IsPhilly = ifelse(city == "Philadelphia", "Yes", "No")) #creating indicator col
+
+#and creating our map
+ggmap(philly, 
+      base_layer = ggplot(aes(x = longitude, y = latitude), data = PhlTx)) +
+  geom_point(aes(color = type_facility, shape = IsPhilly), size = 3, alpha = .6)
+```
+---
+class: center, middle 
+# That code produces this map
+![](IntrotoR_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+---
+class: center, middle, inverse
+# Reproducibility
+
+&lt;img src = https://media.giphy.com/media/AtequVohnG2XK/giphy.gif&gt;
+---
+# Reproducibility
+
+* We all have tasks that we either repeatedly update, or make minor changes to.  Or we have a method that we apply to different populations with minimal tweaks. 
+* Wouldn't it be great if we had a way to code a process once, from start (data importation) through middle (cleaning and manipulation) to end (final report/images/presentations/etc)? 
+* R allows us to do that pretty easily!
+  * R scripts
+  * R markdown
+
+---
+# What is RMarkdown?
+* It's a package that allows you to simultaneously write r code, text, html, and a number of other languages
+* What this means is you get a rich document that is:
+  1. easy to write (most of the magic happens behind the scenes)
+  2. easy to update (just rerun the script with a new dataset)
+  3. a thorough record of your process (someone wants to know how you define x? Look at the code!)
+  4. versatile (set up the output to be pdf, html doc, html presentation, .doc, .ppt, etc)
+  5. easy for anyone else to run (undisturbed vacations, here you come!)
+---
+# RMarkdown in action: 
+* Remember that time Scott made a dashboard for provider report cards and we all had to manually change the parameters and print out 10 of them to PDFs? And then some of the cards we still had to manually edit to reformat provider names or tweak things a bit?  Clearly a good use of everyone's time and skill, agreed?
+* What if we could write a code once for the report card template, provide a list of all the providers, and then tell a program to iterate through that list and generate PDFs for each list? 
+
+&lt;center&gt;&lt;img src=https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif&gt;&lt;/center&gt;
+
+* Small scale example: STEP report cards from beginning to end
+---
+# Fine but how hard is all of this to learn?
+
+* You can get up and running pretty quickly with a few basic concepts and a few set packages
+* A lot of the concepts are pretty similar to SQL and excel logic (with way fewer nested parentheses)
+* Copying and pasting other people's code, googling stuff, and using free online books all make learning R pretty easy
+* The biggest leap is probably learning ggplot, which relies on the grammar of graphics, but its not impossible
+  
+* I'm guessing you can probably read more of the code than you think
+
+
+```r
+#First item is the dataset (bup providers from before)
+# %&gt;% - This symbol (pipe) is the equivalent of 
+#"Take what comes before it and then do this"
+
+sa %&gt;% 
+ filter(city %in% c("Philadelphia", "Bensalem", "Norristown", "Phoenixville")) %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(Nproviders = n()) %&gt;% 
+  arrange(desc(Nproviders))
+```
+
+---
+
+```r
+#First item is the dataset (bup providers from before)
+# %&gt;% - This symbol (pipe) is the equivalent of 
+#"Take what comes before it and then do this"
+
+sa %&gt;% 
+ filter(city %in% c("Philadelphia", "Bensalem", "Norristown", "Phoenixville")) %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(Nproviders = n()) %&gt;% 
+  arrange(desc(Nproviders))
+```
+
+```
+## # A tibble: 4 x 2
+##   city         Nproviders
+##   &lt;chr&gt;             &lt;int&gt;
+## 1 Philadelphia         87
+## 2 Norristown            6
+## 3 Bensalem              3
+## 4 Phoenixville          1
+```
+
+---
+#What if you want the top 10 cities by N SA providers?
+
+```r
+sa %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(Nproviders = n()) %&gt;% 
+  arrange(desc(Nproviders)) %&gt;% 
+  mutate(ProvRank = rank(-Nproviders)) %&gt;% 
+  filter(ProvRank &lt;= 10)
+```
+
+```
+## # A tibble: 10 x 3
+##    city         Nproviders ProvRank
+##    &lt;chr&gt;             &lt;int&gt;    &lt;dbl&gt;
+##  1 Philadelphia         87      1  
+##  2 Pittsburgh           37      2  
+##  3 Erie                 16      3  
+##  4 Lancaster            15      4  
+##  5 Harrisburg           12      5  
+##  6 York                 11      6  
+##  7 Washington           10      7  
+##  8 Reading               8      8  
+##  9 Allentown             7      9.5
+## 10 Johnstown             7      9.5
+```
+
+---
+# Want a graph of top 10? 
+
+```r
+sa %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(Nproviders = n()) %&gt;% 
+  arrange(desc(Nproviders)) %&gt;% 
+  mutate(ProvRank = rank(-Nproviders)) %&gt;% 
+  filter(ProvRank &lt;= 10) %&gt;% 
+  ggplot(aes(x = reorder(city, -Nproviders), y = Nproviders)) +
+  geom_col(fill = "orange")
+```
+
+&lt;img src="IntrotoR_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+---
+Final print-ready version?
+
+```r
+sa %&gt;% 
+  group_by(city) %&gt;% 
+  summarize(Nproviders = n()) %&gt;% 
+  arrange(desc(Nproviders)) %&gt;% 
+  mutate(ProvRank = rank(-Nproviders)) %&gt;% 
+  filter(ProvRank &lt;= 10) %&gt;% 
+  ggplot(aes(x = reorder(city, -Nproviders), y = Nproviders)) +
+  geom_col(fill = "orange") +
+  labs(title = "Top 10 Cities with Most SA Facilities",
+       x = "City",
+       y = "N Providers")
+```
+
+&lt;img src="IntrotoR_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+---
+class: center, middle, inverse
+# Questions? Thoughts? Next steps?
+&lt;center&gt; 
+&lt;img src = https://media.giphy.com/media/5zjdchg0UfDGrHqqFV/giphy.gif&gt;  
+&lt;img src = https://media.giphy.com/media/xT4uQBNEr2CFjaV84M/giphy.gif&gt; &lt;/center&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
