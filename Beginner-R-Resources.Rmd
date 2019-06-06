@@ -1,0 +1,62 @@
+---
+title: 'Beginner''s Guide to R: Resources'
+author: "Jessica Streeter"
+date: "Created on 6/5/2019, updated on `r format(Sys.Date(), '%m/%d/%y')`"
+output: html_document
+---
+First, a tip: As a beginner, I strongly recommend focusing on tidyverse, ggplot, and rmarkdown.  These three packages will give you the biggest bang for your buck and are all fairly easy to get up and running with. 
+
+* Tidyverse – this package is a collection of packages that form the core of what is known as the tidyverse. These packages focus on cleaning, manipulating, and visualizing data.
+* ggplot2 – this is the main package for creating graphs. It’s included in the tidyverse, and builds on the Grammar of Graphics
+* rmarkdown – this package creates reproducible reports, presentations, pdfs, word docs, etc. You will rarely have to call this package directly, and instead just open a new markdown file from rstudio.
+
+# How-To’s:
+I haven't used all of these tools, but all of them were recommended by the broader R community (thanks #rstats!).
+
+* [R Studio Primers](https://rstudio.cloud/learn/primers): Courses created and offered by rstudio that happen on rstudio cloud, so you don’t even need to download and install R to get started. I recommend focusing on the first 4 courses (basics, work with data, visualize data, tidying your data)
+
+* [R Studio cheat sheets](https://www.rstudio.com/resources/cheatsheets/): Many of the most useful ones for getting started are already in our shared folder.  But this is the link to find others.  Some of these are also available directly in RStudio under help/cheatsheets.
+
+* [DataCamp](https://www.datacamp.com/): A great set of online courses, some of which are free (especially the beginner ones). I have a paid subscription through CBH, if there’s enough interest we may want to consider a corporate subscription to this. (Note: they are currently dealing with a bit of a scandal involving very poor handling of a sexual harrassment incident w the CEO, which resulted in many R community members boycotting the company. But since the CEO has stepped down and DataCamp has tried to correct course, I'm going to tentatively recommend them)
+
+* [DataCarpentry](https://datacarpentry.org/R-ecology-lesson/index.html) guides, especially [this one](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html) on dplyr/tidyr and [this one](https://datacarpentry.org/R-ecology-lesson/04-visualization-ggplot2.html) on ggplot2.
+
+* [Rmarkdown Beginner Walkthrough](https://rmarkdown.rstudio.com/articles_intro.html) – has a lot of info on rmarkdown, but mostly I just use the cheatsheet and guide
+
+* [Tidyverse for Beginners](https://slides.com/djnavarro/tidyverse-for-beginners#/) – slide show by Danielle Navarro (overview of course [here](http://rladiessydney.org/littlemisstidyverse)), plus related [github repo](https://github.com/rladiessydney/littlemisstidyverse) with all associated files/exercises
+
+* [Prime Hints for Running a Data Project in R](https://kkulma.github.io/2018-03-18-Prime-Hints-for-Running-a-data-project-in-R/) – invaluable guide on why you should use rprojects (rproj files) and how to set them up
+
+ 
+
+# Other Useful References 
+Some additional resources if you want to go deeper:
+
+* [Strategies for working with new data](https://sharla.party/posts/new-data-strategies/) – Once you’re a bit more comfortable with the basics, this article by Sharla Gefland is great, and talks about two packages (skimr and vizdat) that I highly recommend for quick overviews of new datasets.
+
+* [Scoped Verbs](http://www.rebeccabarter.com/blog/2019-01-23_scoped-verbs/) – great article on some of the more advanced features of dplyr, absolutely not needed to get started
+
+* Using the kableExtra package for [HTML outputs](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html) and [PDF outputs](https://haozhu233.github.io/kableExtra/awesome_table_in_pdf.pdf): If you want to add tables to your PDF or HTML documents, you’re going to want to use kableExtra to make them pretty. Hao Zhu’s guides will become your table bibles
+
+ 
+
+# Open Source Books
+Amazing references, many of which are written by leaders in the field like Hadley Wickham, Garrett Grolemund, David Robinson, and Julia Silge.
+
+All of these can be used as quick reference guides, and you rarely if ever need to read a whole book to find them useful (especially true of cookbook books, which are designed to be resources when you have specific problems to solve)
+
+* [The Tidyverse Cookbook](https://rstudio-education.github.io/tidyverse-cookbook/) by Garrett Grolemund 
+
+* [R For Data Science](https://r4ds.had.co.nz/) by Garrett Grolemund and Hadley Wickam 
+
+* [R Graphics Cookbook, 2nd Ed](https://r-graphics.org/preface.html) by Winston Chang (the ggplot2 bible, organized by things you want to do, like add centered labels to a stacked barchart)
+
+* [Tidy Evaluation](https://tidyeval.tidyverse.org/index.html) by Lionel Henry and Hadley Wickham
+
+* [Text Mining with R](https://www.tidytextmining.com/) by Julia Silge and David Robinson 
+
+* [Data Visualization with R](https://rkabacoff.github.io/datavis/) by Rob Kabacoff
+
+* [Fundamentals of Data Visualization](https://serialmentor.com/dataviz/) by Claus O Wilke (great if you’re not sure what type of figures to use to show a specific thing)
+
+* [Tidyverse Style Guide](https://style.tidyverse.org/) by Hadley Wickham – Accepted coding style for tidyverse code; good reference to see what good readable code looks like; plus there are packages that will put your code in the style for you.
