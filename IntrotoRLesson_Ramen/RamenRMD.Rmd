@@ -1,0 +1,54 @@
+---
+title: "Quick Markdown Document"
+author: "Jessica Streeter, Data Scientist | Data Informatics, CBH"
+date: "Created 8/14/2019; Last Updated: `r format(Sys.Date(), '%m/%d/%Y')`"
+output: html_document
+#params:
+ # style: "Cup"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, messages = F, warnings = F)
+
+#required libraries
+library(tidyverse)
+
+#required data
+RawRamen <- readr::read_csv("RawData/RamenRatings.csv") %>% 
+  mutate(stars = as.numeric(stars))
+  
+
+#any data cleaning/reformatting you need can also be placed here
+CleanRamen <- RawRamen %>% 
+# filter(style == params$style) %>% 
+  mutate(country = factor(country),) %>% 
+  group_by(country) %>% 
+  summarize(nReviews = n(),
+            avgReview = round(mean(stars, na.rm = T),2)) %>%
+  arrange(desc(nReviews))
+```
+
+## Countries with Top Ramen Ratings
+
+This quarterly report provides the average ramen ratings per country to date.  Data are from RamenRating.com.  Cases where the rating was not a number between 0 and 5 were removed (n = `r nrow(RawRamen[is.na(RawRamen$stars) == T,])`). 
+
+```{r ramen by country, fig.height=8, align = "center"}
+# & RawRamen$style == params$style - add to in-line code above when activating parameter
+
+Asia <- c("Cambodia", "Malaysia", "Indonesia", "Singapore", "Sarawak", "Myanmar", "Japan",
+          "South Korea", "Hong Kong", "Taiwan", "Bangladesh", "Philippines", "China", 
+          "Thailand", "India", "Pakistan")
+
+CleanRamen %>% #take this dataset
+  mutate(isAsian = ifelse(country %in% Asia ,"Asia", "Not Asia")) %>% 
+  ggplot(aes(x = reorder(country, avgReview), y = avgReview, size = nReviews, color = isAsian)) +
+  geom_point() +
+  labs(title = "Average Ramen Ratings by Country",
+       subtitle = paste0("Total Reviews: ", nrow(RawRamen)), #[RawRamen$style == params$style,]
+       x = "Countries",
+       y = "Average Rating (0-5)", 
+       caption = "Source: www.theramenrater.com/resources-2/the-list/")+
+  coord_flip() 
+
+```
+

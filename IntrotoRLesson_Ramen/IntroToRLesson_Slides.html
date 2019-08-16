@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>IntroToR.utf8.md</title>
+    <meta charset="utf-8" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: inverse, center, top
+
+background-image: url(https://c.pxhere.com/photos/5d/f0/cat_black_white_different_colored_eyes_black_background_cytochemistry_indexes_look_up-559892.jpg!d)
+background-size: cover
+
+# Super-friendly, Non-intimidating, Soft-and-Fuzzy Intro to R 
+
+### Jessica Streeter, Data Scientist
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+8/12/2019 (updated: 08/15/2019)
+
+
+
+
+---
+class: inverse, center, middle
+
+# Welcome
+
+&lt;img src = https://media.giphy.com/media/DGf8MiaJKg6M8/giphy.gif&gt;
+
+---
+# Goals
+
+* Familiarize yourself with R Studio
+* Load data and packages into R Studio
+* Do basic data manipulation using the tidyverse
+* Create basic figures using ggplot2
+* Create a repeatable report using rmarkdown
+
+--
+
+## Bottom line 
+Let's get you up and running in R as quickly as possible without confusing you in the process!
+
+&lt;center&gt;&lt;img src = https://media.giphy.com/media/80N0hC1mmcAJa/giphy.gif height = 200&gt;&lt;/center&gt;
+
+---
+
+class: inverse, center, middle
+
+# Getting Started
+
+---
+
+#### Layout of R Studio
+
+&lt;img src = https://community.rstudio.com/uploads/default/original/1X/ed868701e40e1719b02ceebc58ce57725b0ded34.jpg&gt;
+
+Clockwise from top left: Console (where your code is executed), Source (where you write code and view raw data), File/plot/package/help/viewer pane; environment/history pane (least useful, you can just minimize)
+---
+# Terms
+* **projects** - a way for R to bundle all your different codes together in a single working directory (aka folder).  ALWAYS USE THESE!!
+* **packages** - different open source plug-ins that allow you to do different things, like import the icd-10 groupings (icd.data), conduct survival analyses (survival, survminer), play a chime (or the mario theme song) when your code finishes (beepr), animate figures(gganimate) or make emojis plot points on your graphs (emoGG)
+* **tidyverse** - a set of packages that works off of the principles around tidy data
+* **pipe** - %&gt;% &lt;- this thing right here, basically means "take what you just did, and then do this." Used widely in the tidyverse
+* **object** - a thing you create in R. It can be a list of things, a dataset, an image, a variable, a number, anything
+* **assignment operator** - &lt;- this arrow shaped thing, it's how you define an object
+* **data frame** - r's fancy name for a table
+* **tibble** - a fancy name for a data frame within the tidyverse. 
+* **$** - used to separate a dataframe and variable. eg if I just want one variable from a dataset, I would type dataset$variable
+
+Hear me use another term that you don't understand? Please stop me and ask :)
+---
+
+# Finding Help
+
+* **?function** - by placing a question mark before any function, you'll get all of the help documentation associated with that function
+* **vignettes** - really nice extended examples that some packages have for certain functions.  Allows you to see a practical application of the code. I often google the function name + vignette (or package name + vignette)
+* **cheat sheets** - they exist for certain packages. Go to help&gt;cheatsheets in rstudio, or [this link](https://www.rstudio.com/resources/cheatsheets/)
+
+--
+
+#### But perhaps most importantly...
+
+--
+&lt;center&gt;
+&lt;img src = https://media.giphy.com/media/mWz4CusF1T1oez1lxR/giphy.gif height = 200&gt;
+&lt;/center&gt;
+* **google**, **twitter**(#rstats), and **stackoverflow**(not for the faint of heart)
+
+---
+# Coding Etiquette
+
+* Comment your code frequently and thoroughly (# denotes a comment in R. and R Studio lets you quickly reflow comments into multiple lines - code &gt; reflow comment)
+* Link it to Jira tickets and/or provide a background on what the request is
+* Load your libraries all at once at beginning of code
+* Place raw data in a "rawdata" folder, and NEVER OVERWRITE THAT DATA
+* One pipe per line
+* Use naming conventions that you can decipher months later (ie not t1, t2, t3, t4)
+  
+#### How do I know if my code is legible?
+* Can someone else read it right now and follow along easily?
+* Can you read it in 3 months and quickly figure out what you did?
+* Ugh this sounds like an annoying amount of work
+  * there are packages, like styler, that can style your code for you after the fact. 
+
+* Want more coding style tips? Check out the [tidyverse style guide](https://style.tidyverse.org/)
+
+
+---
+
+class: inverse, middle, center
+
+# Let's get that data!
+&lt;center&gt;
+&lt;img src = https://media.giphy.com/media/fnlXXGImVWB0RYWWQj/giphy.gif&gt;
+&lt;/center&gt;
+
+
+---
+
+# Creating a new project
+
+* Create a folder somewhere on your system for this project (Get in the habit of making a new folder for every R project you work on)
+* Inside that folder, create a subfolder called "RawData"
+* Open R Studio
+* File &gt; New Project &gt; Existing Directory - navigate to the directory you just created
+
+Congrats! You just made a project! 
+
+---
+
+# Installing our packages
+* Let's open an R script first: File &gt; New File &gt; New R Script
+* We're going to install 4 packages: tidyverse, tidylog, skimr, and visdat - these 4 are a good starting point for many projects
+
+
+```r
+#Installing packages with install.packages command
+
+install.packages("tidyverse")
+install.packages("tidylog")
+install.packages("skimr")
+install.packages("visdat")
+
+# Now load the libraries for this R script - you only need to install 
+# them once, but every time you write a script, you need to load 
+# the libraries into your workspace
+
+library(tidyverse) 
+library(tidylog)
+library(skimr)
+library(visdat)
+#note I don't need quotation marks here, but you can add them if you want
+```
+
+
+* After you write the code, highlight the code and hit control + enter
+
+---
+class: inverse, middle, center
+
+# You just installed some packages!
+
+Take a moment to celebrate your success
+
+&lt;img src = https://media.giphy.com/media/W8krmZSDxPIfm/giphy.gif&gt;
+
+---
+# Importing data
+
+Let's get that data into R, shall we?
+
+* Add the course data file to your raw data file
+* To get it into R, you'll need to read it and assign it to an object you can use later.
+
+
+```r
+#Reading in the data using readr, which is part of tidyverse
+RawRamen &lt;- readr::read_csv("RawData/RamenRatings.csv") 
+#you could also write RawRamen &lt;- read_csv("RawData/RamenRatings.csv")
+
+# Not Working? Did you change your file name? is your folder 
+# named RawData? R is case sensitive
+```
+
+* What about other file formats? For now, it's easiest to save your xlsx sheet as CSV.  You can save from SQL directly to CSV.  If you are intent on reading in excel files as is, check out the readxl package
+---
+
+# Checking out the data
+
+There are a number of different commands you can use to check out the data you just imported:
+
+base R ways:
+* **str()** - lets you see the variable name, the data type, and the first few entries
+* **summary()** - computes summary statistics for all your variables
+* **head()** - lets you view the top 6 rows of your data (can change the n rows)
+
+My preferences:
+* **skimr::skim()** - gives a really nice summary of all your data, including tiny histograms where applicable, organized by data type (small issue with this)
+* **visdat::vis_dat()** gives you a quick figure by variable type while also highlighting missing data points
+* **visdat::vis_mis()** focuses on missing data points
+* **View()** - lets you view the data in a separate tab, like a spreadsheet
+
+---
+#Practice 1 
+Take a few minutes and use each of these commands on your dataset, RawRamen 
+
+Check out how all these commands change when we clean our data a bit and convert variables to more appropriate types. Try rerunning the same commands with the CleanRamen data, defined below
+
+```r
+CleanRamen &lt;- RawRamen %&gt;% 
+  mutate(stars = as.numeric(stars),
+         style = factor(style),
+         brand = factor(brand),
+         country = factor(country))
+```
+
+* Note that if you resize your console window, you'll get different output layouts for skim()
+---
+class: inverse, center, middle
+
+# Congrats! You have data AND you've started exploring it!!
+
+&lt;img src = https://media.giphy.com/media/sphmLQaP0wAdG/giphy.gif&gt;
+
+---
+
+# Quick word on variable types
+
+* You should see several different variable types when you look at your data.
+* One worth noting: Factors
+  * These are what we use for categorical variables (can be ordered or unordered)
+  * This type eliminates the need for dummy variables in most statistical models
+* To change a variable's datatype, we can use as.[newvariabletype]
+
+---
+# Example
+
+
+```r
+str(mtcars) 
+#note cylinders is numeric, but we can probably treat it as categorical
+
+mtcars$cyl2 &lt;- as.factor(mtcars$cyl)
+str(mtcars) 
+
+#Want to make it numeric again?
+mtcars$cyl3 &lt;- as.numeric(mtcars$cyl)
+str(mtcars) 
+
+#WHAT HAPPENED?!
+#factors have both a numerical code, and a category label. 
+#On the backend, r sees levels 1, 2, and 3 with the following character labels:
+levels(mtcars$cyl2)
+
+#So to convert back, you have to get a little tricky - first convert to string, then numeric
+mtcars$cyl4 &lt;- as.numeric(as.character(mtcars$cyl))
+str(mtcars$cyl) #original
+str(mtcars$cyl2) # as factor
+str(mtcars$cyl3) #from factor straight to numeric
+str(mtcars$cyl4) #from factor to string to numeric
+```
+
+---
+
+# Manipulating data
+* We're going to keep it simple, and focus on the 5 dplyr verbs you will use most often
+  * **select()**
+  * **filter()**
+  * **mutate()**
+  * **summarize()** (with **group_by()**)
+  * **arrange()**
+
+* Need to pivot stuff and go between long and wide data formats? It's outside the scope of today's course, but check out **gather()** &amp; **spread()** (older tidyr functions) or **pivot_longer()** &amp; **pivot_wider()** (new tidyr functions)
+
+---
+# First, our logical operators
+
+* **&gt;=, &gt;, &lt;, &lt;=** - all what you expect
+* **==** - we use a double equals for equals in R
+* **&amp;** - and
+* **|** - or
+* **ifelse()** - works like if() in excel; ifelse(logical statement, output if T, output if F)
+* **T, TRUE, F, FALSE** - all acceptable logical outputs
+
+---
+
+# Select and Filter
+
+Let's start with our dataframe RawRamen.  
+
+Say we want to select all columns other than review_number, and we want to filter to only styles served in cups or bowls
+
+
+```r
+RawRamen %&gt;% #this means take our data frame and then do the next line
+  select(-review_number) %&gt;% 
+  filter(style == "Cup" | style == "Bowl") #| means 'or';
+
+#R is flexible, and there are multiple ways to do the same things
+RawRamen %&gt;% 
+  select(brand, variety, style, country, stars) %&gt;% 
+  filter(style %in% c("Cup", "Bowl")) #c() is just how we make lists of items. Don't forget quotes!
+```
+
+---
+
+# Mutate
+* Mutate is super useful for two things:
+  * calculating new variables based on existing variables
+  * altering the variable type of an existing variable
+
+Let's calculate a column that converts the stars to a percent (max stars = 5),
+and let's convert style and brand to factors.
+
+```r
+RawRamen %&gt;% 
+  mutate(stars = as.numeric(stars), #need to convert stars first
+         rating_perc = round( stars/5 * 100,2),
+         style = as.factor(style),
+         brand = as.factor(brand))
+```
+
+---
+# Summarize &amp; Arrange (and group_by)
+
+What brands have the highest average scores?
+* In this case, we want to group our data by the brand, and then summarize by average scores.
+* Arrange will then help us sort them in order
+
+
+```r
+RawRamen %&gt;% 
+  mutate(stars = as.numeric(stars)) %&gt;% #still need to make stars numeric first
+  group_by(brand) %&gt;% 
+  summarize(AvgStars = mean(stars, na.rm = T)) %&gt;% 
+  arrange(desc(AvgStars))
+```
+
+```
+## # A tibble: 456 x 2
+##    brand           AvgStars
+##    &lt;chr&gt;              &lt;dbl&gt;
+##  1 Best Wok               5
+##  2 Chitato                5
+##  3 ChoripDong             5
+##  4 Daddy                  5
+##  5 Daifuku                5
+##  6 Double Mountain        5
+##  7 Foodmon                5
+##  8 Fukumen                5
+##  9 Hakubaku               5
+## 10 Higashi                5
+## # ... with 446 more rows
+```
+
+---
+# Bonus Functions
+* Some quick bonus functions that can be helpful early on
+  * **is.na()** - returns a logical (T/F), useful for subsetting and conditional statements
+  * **rename()** - another verb, useful for renaming variables with annoying names, or to make them more reader friendly just before you print
+  * **tally()** - a shortcut for summarize(n), gives you a count of all items by your previous grouping variables
+  * **distinct()** - pulls out distinct values
+
+---
+# PRACTICE 2
+.pull-left[
+* How many reviews have a rating of &lt;= 1?
+
+* How many reviews are there for the US
+
+* Create a column for "Good ramen", which flags ramen &gt;= 4 as "good", and all others as "mediocre".  How many reviews are good vs mediocre?
+
+* What country has the most reviews, and what's the average review by country? (**n()** will give you count of rows)
+
+* Bonus: How many different styles of ramen are there?
+]
+.pull-right[&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;center&gt;&lt;img src = https://media.giphy.com/media/kjEwVWxW3mVDG/giphy.gif&gt;
+&lt;/center&gt;
+]
+
+---
+class: inverse, center, middle
+
+# Congrats! You're a data manipulating BEAST!!
+&lt;img src = https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif&gt;
+---
+class: inverse, center, middle
+
+# Now let's make pretty figures!
+
+&lt;img src = https://media.giphy.com/media/rYEAkYihZsyWs/giphy.gif&gt;
+
+
+---
+# The grammar of graphics
+* You'll hear this a lot in R crowds, and it's what the gg stands for in ggplot2
+* What you need to know:
+  * The Grammar of Graphics is the idea that you can build every graph from the same basic components (or layers)
+      * Data
+      * Geoms
+      * Coordinate system
+* How this looks in ggplot
+  * You select your dataset, identify your aesthetics (tell ggplot how to use your data), and then select your geoms (what type of graph do you want? Bar? Line? Bubble? Boxplot?)  
+  * Most of the time, this is enough.  The rest is just making it pretty
+
+---
+# ggplot2 in Practice
+.pull-left[
+
+```r
+CleanRamen &lt;- RawRamen %&gt;% 
+  mutate(stars = as.numeric(stars),
+         country = factor(country),) %&gt;% 
+  group_by(country) %&gt;% 
+  summarize(nReviews = n(),
+            avgReview = round(mean(stars, na.rm = T),2)) %&gt;% 
+  arrange(desc(nReviews))
+
+CleanRamen %&gt;% #take this dataset
+  ggplot(aes(x = country, y = avgReview)) + #create a ggplot setting x to country and y to avgReview
+  geom_point() #select geom_point, which gives us points for each data item
+```
+]
+.pull-right[
+![](IntroToR_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+]
+
+ta-da!! You have a plot
+---
+class: inverse, center, middle
+# But wait, I was promised pretty figures!!
+&lt;img src = https://media.giphy.com/media/kDP4TNA72QvCM/giphy.gif&gt;
+---
+# Let's keep tweaking that same code
+* Flip the axes using coord_flip()
+* reorder the countries by rating by using reorder()
+* Add some labels by using labs()
+---
+# Making it pretty
+.pull-left[
+
+```r
+#Let's make it prettier
+CleanRamen %&gt;% #take this dataset
+*  ggplot(aes(x = reorder(country, avgReview), y = avgReview)) +
+  geom_point() +
+*  labs(title = "Average Ramen Ratings by Country",
+*       subtitle = paste0("Total Reviews: ", nrow(RawRamen)),
+       x = "Countries",
+       y = "Average Rating (0-5)", 
+       caption = "Source: www.theramenrater.com/resources-2/the-list/")+
+*  coord_flip()
+```
+]
+.pull-right[
+![](IntroToR_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+]
+---
+#Let's make it fancy
+.pull-left[
+
+```r
+#Let's make it fancier
+Asia &lt;- c("Cambodia", "Malaysia", "Indonesia", "Singapore", "Sarawak", "Myanmar", "Japan",
+          "South Korea", "Hong Kong", "Taiwan", "Bangladesh", "Philippines", "China", 
+          "Thailand", "India", "Pakistan")
+
+CleanRamen %&gt;% #take this dataset
+*  mutate(isAsian = ifelse(country %in% Asia ,"Asia", "Not Asia")) %&gt;% 
+*  ggplot(aes(x = reorder(country, avgReview), y = avgReview, size = nReviews, color = isAsian)) +
+  geom_point() +
+  labs(title = "Average Ramen Ratings by Country",
+       subtitle = paste0("Total Reviews: ", nrow(RawRamen)),
+       x = "Countries",
+       y = "Average Rating (0-5)", 
+       caption = "Source: www.theramenrater.com/resources-2/the-list/")+
+  coord_flip() 
+```
+]
+.pull-right[
+![](IntroToR_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+]
+---
+# Can we compare Asian and non-Asian side by side?
+.pull-left[
+
+```r
+#Let's Facet
+Asia &lt;- c("Cambodia", "Malaysia", "Indonesia", "Singapore", "Sarawak", "Myanmar", "Japan",
+          "South Korea", "Hong Kong", "Taiwan", "Bangladesh", "Philippines", "China", 
+          "Thailand", "India", "Pakistan")
+
+CleanRamen %&gt;% #take this dataset
+  mutate(isAsian = ifelse(country %in% Asia ,"Asia", "Not Asia")) %&gt;% 
+  ggplot(aes(x = reorder(country, avgReview), y = avgReview, size = nReviews, color = isAsian)) +
+  geom_point() +
+  labs(title = "Average Ramen Ratings by Country",
+       subtitle = paste0("Total Reviews: ", nrow(RawRamen)),
+       x = "Countries",
+       y = "Average Rating (0-5)", 
+       caption = "Source: www.theramenrater.com/resources-2/the-list/")+
+  coord_flip() +
+*  facet_wrap(~isAsian)
+```
+]
+.pull-right[
+![](IntroToR_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+]
+
+---
+# Just for fun, let's get crazy with it
+The power of ggplot2
+
+.pull-left[
+
+```r
+devtools::install_github("dill/emoGG")
+library(emoGG)
+
+RamenClean&lt;- RawRamen %&gt;% 
+  mutate(stars = as.numeric(stars)) %&gt;% 
+  filter(is.na(stars) == F, is.na(style) == F) %&gt;% 
+  mutate(style = factor(style),
+         country = factor(country))
+
+#which countries produce the highest rated ramen
+RamenClean %&gt;% 
+  group_by(country) %&gt;% 
+  summarize(AvgRating = mean(stars),
+            NReviews = n()) %&gt;% 
+  ggplot(aes(y = reorder(country, AvgRating),x = AvgRating)) +
+  geom_segment(aes(x = 0, xend = AvgRating, yend = country), color = "#e0dabc", size = 1.5) +
+  geom_emoji(emoji = "1f365", size = .03) +
+  geom_vline(xintercept = mean(RamenClean$stars), color = "red")+
+  geom_text(aes(label = NReviews), size = 3, hjust = -.5) +
+  labs(title = "Which Countries Produce the Best Ramen?",
+       x = "Average Rating Across All Products (0-5)",
+       caption = "Numbers represent total N of reviews per country\nData: TheRamenRater.com|Viz: @phillynerd") +
+  scale_x_continuous(limits = c(0,5)) +
+  add_emoji(emoji = "1f35c") +
+  theme(panel.grid = element_blank(),
+       panel.background = element_rect(fill = "#9b9999"),
+       axis.title.y = element_blank() ) +
+  annotate(geom = "text", 
+           x = mean(RamenClean$stars), y = 0, 
+           label = paste0("Overall Avg: ", round(mean(RamenClean$stars),1)),
+           angle = 90,
+           hjust = -.2, vjust = -.5, size = 4)
+```
+
+]
+
+.pull-right[
+&lt;img src = https://github.com/phillynerd/TidyTuesday/blob/master/RamenRatings_6-6-2019/BestRamenCountry.png?raw=true&gt;
+]
+---
+#Practice 3
+* Go back to our third visual, where we make it fancy (slide 33)
+  * Change "color" to "fill" in aes()
+  * Now replace geom_point with geom_col(). What happens?
+  * What happens if you use geom_bar()? try geom_bar(stat = "identity")
+
+
+* Create a visual that explores how ramen ratings vary by style (you'll need to manipulate RawRamen first)
+  * Try different ways to visualize the different styles (color, fill, facet_wrap, different geoms, etc)
+---
+class: inverse, center, middle
+# Dataviz achievement: unlocked!
+&lt;img src = https://media.giphy.com/media/D3DXKq2sG9n5m/giphy.gif&gt;
+
+---
+class: inverse, center, middle
+
+# The Magical World of Reproducibility
+
+&lt;img src = https://media.giphy.com/media/DUyLrL6MIFBsI/giphy.gif&gt;
+---
+# Rmarkdown
+
+* A type of file that allows you to integrate text, html, r code, and several other languages into a single document
+*  That document also references your data file and relevant packages, so everything is in one place.
+* Various options for output, including slides, dynamic html reports, pdfs, and even word docs.
+
+My general workflow: 
+* create rscript 
+* do my analysis in that script 
+* figure out what I want to report out
+* create an rmarkdown document, and use relevant portions of code from rscript file
+* knit the file to pdf
+
+---
+# Components of an rmarkdown document
+.pull-left[
+* YAML header
+* Setup script
+* code chunks
+* text
+]
+
+.pull-right[
+&lt;img src = rmarkdown_screenshot.PNG&gt;
+]
+---
+# Let's make a quick markdown document 
+
+---
+# Practice 4
+
+Make your own rmarkdown document!
+* Go to file &gt; new file &gt; rmarkdown
+* Set up your yaml how you want it
+* Set up your setup chunk (make sure to add the following statement: 
+knitr::opts_chunk$set(echo = F, messages = F, warnings = F)
+* Add some text (check out the rmarkdown cheatsheet for quick formatting tools, like how to center, make something bold, and use headings)
+* Add a figure or two from one of your earlier practices (or make a new one if you want!)
+* Knit to html
+
+* BONUS 1: Add a parameter
+* BONUS 2: Add some in-line code in your text 
+
+---
+class: inverse, center, middle
+
+# Stand back, world! Coding ninjas coming through
+&lt;img src = https://media.giphy.com/media/8Do8IhcCRIYdW/giphy.gif height = 400&gt;
+---
+# Final tips
+
+* The best way to learn R is to just start using it regularly
+  * Simple tasks will take longer at first, but you only have to do things once
+* Don't be afraid to google things or try something new
+  * This gets easier as you learn R terminology
+* Collaborate on stuff as much as you can - it helps a lot with learning
+* If you're stuck, please use me as a resource!
+* Don't try to make a pie chart in R
+
+---
+class: inverse, center, middle
+# That's it! You're on your way to being an R superstar!
+&lt;img src = https://media.giphy.com/media/Yrl3qoBXef8rorcZdE/giphy.gif&gt;
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"seal": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
